@@ -24,5 +24,6 @@ urlpatterns = [
     path("api/", include("usuarios.urls_catalogo")),
     path("api/", include("cursos.urls")),
     path("api/", include("productividad.urls")),
+    path("api/", include("tramites.urls")),
     path("api-auth/", include("rest_framework.urls")),
 ]
