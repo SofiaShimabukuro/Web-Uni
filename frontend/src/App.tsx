@@ -6,7 +6,9 @@ import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import { ComisionDetailPage } from "./pages/ComisionDetailPage";
 import { ProductividadPage } from "./pages/ProductividadPage";
+import { TramitesPage } from "./pages/TramitesPage";
 import { DocenteComisionPage } from "./pages/docente/DocenteComisionPage";
+import { DocenteMesasPage } from "./pages/docente/DocenteMesasPage";
 
 export default function App() {
   return (
@@ -24,7 +26,9 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/comisiones/:comisionId" element={<ComisionDetailPage />} />
             <Route path="/productividad" element={<ProductividadPage />} />
+            <Route path="/tramites" element={<TramitesPage />} />
             <Route path="/docente/comisiones/:comisionId" element={<DocenteComisionPage />} />
+            <Route path="/docente/mesas" element={<DocenteMesasPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

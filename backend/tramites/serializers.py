@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from cursos.models import InscripcionComision
+from cursos.serializers import AlumnoResumenSerializer
 
 from .models import InscripcionMesa, MesaExamen, SolicitudTramite
 
@@ -17,9 +18,11 @@ class MesaExamenSerializer(serializers.ModelSerializer):
 
 
 class InscripcionMesaSerializer(serializers.ModelSerializer):
+    alumno_detalle = AlumnoResumenSerializer(source="alumno", read_only=True)
+
     class Meta:
         model = InscripcionMesa
-        fields = ["id", "alumno", "mesa", "fecha_inscripcion", "estado", "nota"]
+        fields = ["id", "alumno", "alumno_detalle", "mesa", "fecha_inscripcion", "estado", "nota"]
         read_only_fields = ["alumno", "fecha_inscripcion"]
 
     def validate(self, attrs):

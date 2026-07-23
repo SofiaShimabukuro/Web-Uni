@@ -1,5 +1,8 @@
 from rest_framework import permissions, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
 
+from cursos.models import InscripcionComision
 from cursos.permissions import EsAdministrativoOSoloLectura
 
 from .models import InscripcionMesa, MesaExamen, SolicitudTramite
@@ -47,3 +50,42 @@ class SolicitudTramiteViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(alumno=self.request.user)
+
+
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def legajo_academico(request):
+    """El legajo no es una tabla: se arma acá combinando inscripcion_comision
+    (aprobada) e inscripcion_mesa (aprobado) del alumno logueado. Ver
+    docs/procesos/03-mesas-legajo-tramites.md."""
+    alumno = request.user
+    entradas = []
+
+    for insc in InscripcionComision.objects.filter(
+        alumno=alumno, estado=InscripcionComision.Estado.APROBADA
+    ).select_related("comision__materia"):
+        entradas.append(
+            {
+                "materia_codigo": insc.comision.materia.codigo,
+                "materia_nombre": insc.comision.materia.nombre,
+                "origen": "comision",
+                "periodo": insc.comision.periodo,
+                "nota": None,
+            }
+        )
+
+    for im in InscripcionMesa.objects.filter(
+        alumno=alumno, estado=InscripcionMesa.Estado.APROBADO
+    ).select_related("mesa__materia"):
+        entradas.append(
+            {
+                "materia_codigo": im.mesa.materia.codigo,
+                "materia_nombre": im.mesa.materia.nombre,
+                "origen": "mesa",
+                "periodo": im.mesa.fecha.isoformat(),
+                "nota": str(im.nota) if im.nota is not None else None,
+            }
+        )
+
+    entradas.sort(key=lambda e: e["materia_codigo"])
+    return Response(entradas)

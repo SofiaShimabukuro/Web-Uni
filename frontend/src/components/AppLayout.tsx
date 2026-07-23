@@ -7,8 +7,12 @@ const NAV_POR_ROL: Record<string, { to: string; label: string }[]> = {
   alumno: [
     { to: "/", label: "Mis comisiones" },
     { to: "/productividad", label: "Productividad" },
+    { to: "/tramites", label: "Legajo y trámites" },
   ],
-  docente: [{ to: "/", label: "Mis comisiones" }],
+  docente: [
+    { to: "/", label: "Mis comisiones" },
+    { to: "/docente/mesas", label: "Mesas de examen" },
+  ],
   administrativo: [{ to: "/", label: "Administración" }],
 };
 
