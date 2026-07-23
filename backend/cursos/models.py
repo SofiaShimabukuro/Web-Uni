@@ -84,6 +84,7 @@ class Entrega(models.Model):
 
     class Meta:
         db_table = "entrega"
+        ordering = ["fecha_limite"]
 
     def __str__(self):
         return self.titulo
