@@ -1,5 +1,9 @@
+from datetime import timedelta
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from cursos.models import Entrega, Materia, Recurso
 
@@ -31,6 +35,12 @@ class BloqueEstudio(models.Model):
     class Meta:
         db_table = "bloque_estudio"
         ordering = ["fecha", "hora_inicio"]
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(hora_fin__gt=models.F("hora_inicio")),
+                name="bloque_estudio_hora_fin_gt_inicio",
+            )
+        ]
 
     def __str__(self):
         return f"{self.alumno} · {self.fecha} {self.hora_inicio}-{self.hora_fin}"
@@ -84,13 +94,43 @@ class ItemRepaso(models.Model):
     facilidad = models.DecimalField(max_digits=4, decimal_places=2, default=2.5)
     intervalo_dias = models.PositiveIntegerField(default=0)
     repeticiones = models.PositiveIntegerField(default=0)
-    proxima_fecha_repaso = models.DateField()
+    proxima_fecha_repaso = models.DateField(default=timezone.localdate)
 
     class Meta:
         db_table = "item_repaso"
 
     def __str__(self):
         return self.pregunta[:60]
+
+    def aplicar_calificacion(self, calificacion):
+        """Recalcula facilidad/intervalo/próxima fecha (SM-2 simplificado).
+
+        Es la única vía para tocar estos campos: se llama desde
+        SesionRepasoSerializer.create(), nunca se editan a mano vía API
+        (ver regla de negocio 1 del Proceso 02).
+        """
+        ajuste_facilidad = {
+            SesionRepaso.Calificacion.OTRA_VEZ: Decimal("-0.20"),
+            SesionRepaso.Calificacion.DIFICIL: Decimal("-0.15"),
+            SesionRepaso.Calificacion.BIEN: Decimal("0.00"),
+            SesionRepaso.Calificacion.FACIL: Decimal("0.15"),
+        }[calificacion]
+        self.facilidad = max(Decimal("1.3"), self.facilidad + ajuste_facilidad)
+
+        if calificacion == SesionRepaso.Calificacion.OTRA_VEZ:
+            self.repeticiones = 0
+            self.intervalo_dias = 1
+        else:
+            self.repeticiones += 1
+            if self.repeticiones == 1:
+                self.intervalo_dias = 1
+            elif self.repeticiones == 2:
+                self.intervalo_dias = 6
+            else:
+                self.intervalo_dias = round(self.intervalo_dias * float(self.facilidad))
+
+        self.proxima_fecha_repaso = timezone.localdate() + timedelta(days=self.intervalo_dias)
+        self.save(update_fields=["facilidad", "intervalo_dias", "repeticiones", "proxima_fecha_repaso"])
 
 
 class SesionRepaso(models.Model):
@@ -127,6 +167,14 @@ class Autoevaluacion(models.Model):
 
     def __str__(self):
         return f"{self.alumno} · {self.materia} · {self.fecha}"
+
+    def recalcular_puntaje(self):
+        respondidas = self.preguntas.exclude(es_correcta=None)
+        if not respondidas.exists():
+            return
+        correctas = respondidas.filter(es_correcta=True).count()
+        self.puntaje = Decimal(correctas) / Decimal(respondidas.count()) * 100
+        self.save(update_fields=["puntaje"])
 
 
 class PreguntaAutoevaluacion(models.Model):
