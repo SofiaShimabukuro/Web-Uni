@@ -77,10 +77,25 @@ class EntregaSerializer(serializers.ModelSerializer):
         )
 
 
+class ComisionResumenSerializer(serializers.ModelSerializer):
+    materia_codigo = serializers.CharField(source="materia.codigo", read_only=True)
+    materia_nombre = serializers.CharField(source="materia.nombre", read_only=True)
+    docente_nombre = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comision
+        fields = ["id", "materia_codigo", "materia_nombre", "periodo", "aula", "docente_nombre"]
+
+    def get_docente_nombre(self, obj):
+        return obj.docente.get_full_name() or obj.docente.username
+
+
 class InscripcionComisionSerializer(serializers.ModelSerializer):
+    comision_detalle = ComisionResumenSerializer(source="comision", read_only=True)
+
     class Meta:
         model = InscripcionComision
-        fields = ["id", "alumno", "comision", "fecha_inscripcion", "estado"]
+        fields = ["id", "alumno", "comision", "comision_detalle", "fecha_inscripcion", "estado"]
         read_only_fields = ["alumno", "fecha_inscripcion"]
 
     def validate(self, attrs):

@@ -106,6 +106,7 @@ class InscripcionComision(models.Model):
     class Meta:
         db_table = "inscripcion_comision"
         unique_together = ("alumno", "comision")
+        ordering = ["-fecha_inscripcion"]
 
     def __str__(self):
         return f"{self.alumno} -> {self.comision}"

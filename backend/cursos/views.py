@@ -42,21 +42,54 @@ class ComisionViewSet(viewsets.ModelViewSet):
 
 
 class ModuloViewSet(viewsets.ModelViewSet):
-    queryset = Modulo.objects.select_related("comision").all()
     serializer_class = ModuloSerializer
     permission_classes = [permissions.IsAuthenticated, EsDocenteDeComisionOSoloLectura]
 
+    def get_queryset(self):
+        qs = Modulo.objects.select_related("comision")
+        user = self.request.user
+        if user.rol == "docente":
+            qs = qs.filter(comision__docente=user)
+        elif user.rol == "alumno":
+            qs = qs.filter(comision__inscripciones__alumno=user)
+        comision_id = self.request.query_params.get("comision")
+        if comision_id:
+            qs = qs.filter(comision_id=comision_id)
+        return qs.distinct()
+
 
 class RecursoViewSet(viewsets.ModelViewSet):
-    queryset = Recurso.objects.select_related("modulo__comision").all()
     serializer_class = RecursoSerializer
     permission_classes = [permissions.IsAuthenticated, EsDocenteDeComisionOSoloLectura]
 
+    def get_queryset(self):
+        qs = Recurso.objects.select_related("modulo__comision")
+        user = self.request.user
+        if user.rol == "docente":
+            qs = qs.filter(modulo__comision__docente=user)
+        elif user.rol == "alumno":
+            qs = qs.filter(modulo__comision__inscripciones__alumno=user)
+        modulo_id = self.request.query_params.get("modulo")
+        if modulo_id:
+            qs = qs.filter(modulo_id=modulo_id)
+        return qs.distinct()
+
 
 class EntregaViewSet(viewsets.ModelViewSet):
-    queryset = Entrega.objects.select_related("modulo__comision").all()
     serializer_class = EntregaSerializer
     permission_classes = [permissions.IsAuthenticated, EsDocenteDeComisionOSoloLectura]
+
+    def get_queryset(self):
+        qs = Entrega.objects.select_related("modulo__comision")
+        user = self.request.user
+        if user.rol == "docente":
+            qs = qs.filter(modulo__comision__docente=user)
+        elif user.rol == "alumno":
+            qs = qs.filter(modulo__comision__inscripciones__alumno=user)
+        modulo_id = self.request.query_params.get("modulo")
+        if modulo_id:
+            qs = qs.filter(modulo_id=modulo_id)
+        return qs.distinct()
 
 
 class InscripcionComisionViewSet(viewsets.ModelViewSet):
