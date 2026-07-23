@@ -40,6 +40,7 @@ class Comision(models.Model):
 
     class Meta:
         db_table = "comision"
+        ordering = ["-periodo", "materia__codigo"]
 
     def __str__(self):
         return f"{self.materia.codigo} ({self.periodo})"
@@ -135,6 +136,7 @@ class EntregaAlumno(models.Model):
     class Meta:
         db_table = "entrega_alumno"
         unique_together = ("entrega", "alumno")
+        ordering = ["-id"]
 
     def __str__(self):
         return f"{self.alumno} -> {self.entrega}"

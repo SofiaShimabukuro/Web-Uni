@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from usuarios.models import Usuario
+
 from .models import (
     Carrera,
     Comision,
@@ -10,6 +12,12 @@ from .models import (
     Modulo,
     Recurso,
 )
+
+
+class AlumnoResumenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ["id", "username", "first_name", "last_name"]
 
 
 class CarreraSerializer(serializers.ModelSerializer):
@@ -92,10 +100,19 @@ class ComisionResumenSerializer(serializers.ModelSerializer):
 
 class InscripcionComisionSerializer(serializers.ModelSerializer):
     comision_detalle = ComisionResumenSerializer(source="comision", read_only=True)
+    alumno_detalle = AlumnoResumenSerializer(source="alumno", read_only=True)
 
     class Meta:
         model = InscripcionComision
-        fields = ["id", "alumno", "comision", "comision_detalle", "fecha_inscripcion", "estado"]
+        fields = [
+            "id",
+            "alumno",
+            "alumno_detalle",
+            "comision",
+            "comision_detalle",
+            "fecha_inscripcion",
+            "estado",
+        ]
         read_only_fields = ["alumno", "fecha_inscripcion"]
 
     def validate(self, attrs):
@@ -110,9 +127,20 @@ class InscripcionComisionSerializer(serializers.ModelSerializer):
 
 
 class EntregaAlumnoSerializer(serializers.ModelSerializer):
+    alumno_detalle = AlumnoResumenSerializer(source="alumno", read_only=True)
+
     class Meta:
         model = EntregaAlumno
-        fields = ["id", "entrega", "alumno", "fecha_envio", "archivo_url", "nota", "estado"]
+        fields = [
+            "id",
+            "entrega",
+            "alumno",
+            "alumno_detalle",
+            "fecha_envio",
+            "archivo_url",
+            "nota",
+            "estado",
+        ]
         read_only_fields = ["alumno"]
 
     def validate(self, attrs):

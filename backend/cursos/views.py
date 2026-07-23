@@ -42,9 +42,17 @@ class MateriaViewSet(viewsets.ModelViewSet):
 
 
 class ComisionViewSet(viewsets.ModelViewSet):
-    queryset = Comision.objects.select_related("materia", "docente").all()
     serializer_class = ComisionSerializer
     permission_classes = [permissions.IsAuthenticated, EsAdministrativoOSoloLectura]
+
+    def get_queryset(self):
+        qs = Comision.objects.select_related("materia", "docente")
+        user = self.request.user
+        if user.rol == "docente":
+            qs = qs.filter(docente=user)
+        elif user.rol == "alumno":
+            qs = qs.filter(inscripciones__alumno=user)
+        return qs.distinct()
 
 
 class ModuloViewSet(viewsets.ModelViewSet):
@@ -106,9 +114,12 @@ class InscripcionComisionViewSet(viewsets.ModelViewSet):
         user = self.request.user
         qs = InscripcionComision.objects.select_related("alumno", "comision")
         if user.rol == "alumno":
-            return qs.filter(alumno=user)
-        if user.rol == "docente":
-            return qs.filter(comision__docente=user)
+            qs = qs.filter(alumno=user)
+        elif user.rol == "docente":
+            qs = qs.filter(comision__docente=user)
+        comision_id = self.request.query_params.get("comision")
+        if comision_id:
+            qs = qs.filter(comision_id=comision_id)
         return qs
 
     def perform_create(self, serializer):
@@ -123,9 +134,12 @@ class EntregaAlumnoViewSet(viewsets.ModelViewSet):
         user = self.request.user
         qs = EntregaAlumno.objects.select_related("entrega__modulo__comision", "alumno")
         if user.rol == "alumno":
-            return qs.filter(alumno=user)
-        if user.rol == "docente":
-            return qs.filter(entrega__modulo__comision__docente=user)
+            qs = qs.filter(alumno=user)
+        elif user.rol == "docente":
+            qs = qs.filter(entrega__modulo__comision__docente=user)
+        entrega_id = self.request.query_params.get("entrega")
+        if entrega_id:
+            qs = qs.filter(entrega_id=entrega_id)
         return qs
 
     def perform_create(self, serializer):

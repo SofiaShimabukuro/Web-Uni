@@ -5,7 +5,7 @@ from . import views
 router = DefaultRouter()
 router.register("carreras", views.CarreraViewSet)
 router.register("materias", views.MateriaViewSet)
-router.register("comisiones", views.ComisionViewSet)
+router.register("comisiones", views.ComisionViewSet, basename="comision")
 router.register("modulos", views.ModuloViewSet, basename="modulo")
 router.register("recursos", views.RecursoViewSet, basename="recurso")
 router.register("entregas", views.EntregaViewSet, basename="entrega")
