@@ -17,9 +17,13 @@ class Materia(models.Model):
     codigo = models.CharField(max_length=20, unique=True)
     nombre = models.CharField(max_length=200)
     creditos = models.PositiveSmallIntegerField(default=0)
+    semestre = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Semestre de la malla curricular (1-10), si aplica."
+    )
 
     class Meta:
         db_table = "materia"
+        ordering = ["semestre", "codigo"]
 
     def __str__(self):
         return f"{self.codigo} - {self.nombre}"

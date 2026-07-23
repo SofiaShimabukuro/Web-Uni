@@ -21,7 +21,7 @@ class CarreraSerializer(serializers.ModelSerializer):
 class MateriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Materia
-        fields = ["id", "carrera", "codigo", "nombre", "creditos"]
+        fields = ["id", "carrera", "codigo", "nombre", "creditos", "semestre"]
 
 
 class ComisionSerializer(serializers.ModelSerializer):
