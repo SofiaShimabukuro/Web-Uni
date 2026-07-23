@@ -1,6 +1,15 @@
 import { AppBar, Toolbar, Typography, Chip, Button, Container, Box } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+
+const NAV_POR_ROL: Record<string, { to: string; label: string }[]> = {
+  alumno: [
+    { to: "/", label: "Mis comisiones" },
+    { to: "/productividad", label: "Productividad" },
+  ],
+  docente: [{ to: "/", label: "Mis comisiones" }],
+  administrativo: [{ to: "/", label: "Administración" }],
+};
 
 export function AppLayout() {
   const { usuario, logout } = useAuth();
@@ -11,13 +20,22 @@ export function AppLayout() {
     navigate("/login");
   }
 
+  const nav = usuario ? (NAV_POR_ROL[usuario.rol] ?? []) : [];
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <AppBar position="static">
         <Toolbar sx={{ gap: 2 }}>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ mr: 2 }}>
             Web-Uni
           </Typography>
+          <Box sx={{ display: "flex", gap: 1, flexGrow: 1 }}>
+            {nav.map((item) => (
+              <Button key={item.to} color="inherit" component={Link} to={item.to}>
+                {item.label}
+              </Button>
+            ))}
+          </Box>
           {usuario && (
             <>
               <Chip label={usuario.rol} size="small" color="secondary" />

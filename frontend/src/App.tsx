@@ -5,6 +5,7 @@ import { AppLayout } from "./components/AppLayout";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ComisionDetailPage } from "./pages/ComisionDetailPage";
+import { ProductividadPage } from "./pages/ProductividadPage";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           >
             <Route path="/" element={<DashboardPage />} />
             <Route path="/comisiones/:comisionId" element={<ComisionDetailPage />} />
+            <Route path="/productividad" element={<ProductividadPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

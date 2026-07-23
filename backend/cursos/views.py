@@ -24,15 +24,21 @@ from .serializers import (
 
 
 class CarreraViewSet(viewsets.ModelViewSet):
+    """Catálogo de referencia (pocas decenas de filas): sin paginar, para poblar selects."""
+
     queryset = Carrera.objects.all()
     serializer_class = CarreraSerializer
     permission_classes = [permissions.IsAuthenticated, EsAdministrativoOSoloLectura]
+    pagination_class = None
 
 
 class MateriaViewSet(viewsets.ModelViewSet):
+    """Catálogo de referencia (una malla completa, ~50 filas): sin paginar, para poblar selects."""
+
     queryset = Materia.objects.select_related("carrera").all()
     serializer_class = MateriaSerializer
     permission_classes = [permissions.IsAuthenticated, EsAdministrativoOSoloLectura]
+    pagination_class = None
 
 
 class ComisionViewSet(viewsets.ModelViewSet):

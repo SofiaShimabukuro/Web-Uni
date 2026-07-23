@@ -53,7 +53,14 @@ class RegistroHabitoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, EsPropietario]
 
     def get_queryset(self):
-        return RegistroHabito.objects.filter(habito__alumno=self.request.user)
+        qs = RegistroHabito.objects.filter(habito__alumno=self.request.user)
+        habito_id = self.request.query_params.get("habito")
+        if habito_id:
+            qs = qs.filter(habito_id=habito_id)
+        fecha = self.request.query_params.get("fecha")
+        if fecha:
+            qs = qs.filter(fecha=fecha)
+        return qs
 
 
 class ItemRepasoViewSet(viewsets.ModelViewSet):

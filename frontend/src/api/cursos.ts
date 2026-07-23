@@ -43,6 +43,15 @@ export interface Entrega {
   puntaje_maximo: string;
 }
 
+export interface Materia {
+  id: number;
+  carrera: number;
+  codigo: string;
+  nombre: string;
+  creditos: number;
+  semestre: number | null;
+}
+
 interface Paginado<T> {
   count: number;
   next: string | null;
@@ -74,4 +83,10 @@ export async function obtenerEntregasDeModulo(moduloId: number) {
     params: { modulo: moduloId },
   });
   return data.results;
+}
+
+/** /materias/ no está paginado: es un catálogo de referencia (~50 filas). */
+export async function obtenerMaterias() {
+  const { data } = await api.get<Materia[]>("/materias/");
+  return data;
 }

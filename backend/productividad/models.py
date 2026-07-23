@@ -61,6 +61,7 @@ class Habito(models.Model):
 
     class Meta:
         db_table = "habito"
+        ordering = ["nombre"]
 
     def __str__(self):
         return self.nombre
@@ -74,6 +75,7 @@ class RegistroHabito(models.Model):
     class Meta:
         db_table = "registro_habito"
         unique_together = ("habito", "fecha")
+        ordering = ["-fecha"]
 
     def __str__(self):
         return f"{self.habito} · {self.fecha} · {'✓' if self.cumplido else '✗'}"
@@ -98,6 +100,7 @@ class ItemRepaso(models.Model):
 
     class Meta:
         db_table = "item_repaso"
+        ordering = ["proxima_fecha_repaso"]
 
     def __str__(self):
         return self.pregunta[:60]
@@ -148,6 +151,7 @@ class SesionRepaso(models.Model):
 
     class Meta:
         db_table = "sesion_repaso"
+        ordering = ["-fecha", "-id"]
 
     def __str__(self):
         return f"{self.item_repaso} · {self.calificacion}"
@@ -164,6 +168,7 @@ class Autoevaluacion(models.Model):
 
     class Meta:
         db_table = "autoevaluacion"
+        ordering = ["-fecha", "-id"]
 
     def __str__(self):
         return f"{self.alumno} · {self.materia} · {self.fecha}"
@@ -188,6 +193,7 @@ class PreguntaAutoevaluacion(models.Model):
 
     class Meta:
         db_table = "pregunta_autoevaluacion"
+        ordering = ["id"]
 
     def __str__(self):
         return self.enunciado[:60]
@@ -228,6 +234,7 @@ class Recordatorio(models.Model):
 
     class Meta:
         db_table = "recordatorio"
+        ordering = ["-fecha_hora_envio"]
 
     def __str__(self):
         return f"{self.alumno} · {self.tipo} · {self.fecha_hora_envio}"
