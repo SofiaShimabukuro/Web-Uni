@@ -93,7 +93,7 @@ class ItemRepaso(models.Model):
     )
     pregunta = models.TextField()
     respuesta = models.TextField()
-    facilidad = models.DecimalField(max_digits=4, decimal_places=2, default=2.5)
+    facilidad = models.DecimalField(max_digits=4, decimal_places=2, default=Decimal("2.5"))
     intervalo_dias = models.PositiveIntegerField(default=0)
     repeticiones = models.PositiveIntegerField(default=0)
     proxima_fecha_repaso = models.DateField(default=timezone.localdate)
