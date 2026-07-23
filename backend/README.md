@@ -39,9 +39,33 @@ celery -A config worker -l info
 celery -A config beat -l info
 ```
 
+Las tareas periódicas (`productividad/tasks.py`) ya quedan registradas al
+correr `migrate` (migración de datos `0005_tareas_periodicas_recordatorios`),
+corriendo todos los días a las 07:00 (hora Argentina):
+
+- `generar_recordatorios_entregas_proximas` — un recordatorio por alumno
+  inscripto activo que todavía no entregó, para entregas que vencen dentro
+  de las próximas 24hs.
+- `generar_recordatorios_habitos` — para hábitos diarios sin
+  `registro_habito` cumplido el día anterior.
+- `generar_recordatorios_repaso_espaciado` — para todo `item_repaso` con
+  `proxima_fecha_repaso` ya vencida.
+
+Los tres son idempotentes (no duplican un recordatorio ya pendiente) y
+solo *crean* el registro en `pendiente` — no hay todavía un canal real de
+entrega (push/email); eso queda para cuando se integre un proveedor.
+`examen_proximo` no está implementado: depende de una entidad de mesa de
+examen que todavía no existe (Proceso 03).
+
+Para probar manualmente sin esperar al cron, desde `python manage.py shell`:
+
+```python
+from productividad.tasks import generar_todos_los_recordatorios
+generar_todos_los_recordatorios()
+```
+
 ## Estado actual
 
-Scaffold inicial: modelos + admin de los Procesos 01 y 02, settings de
-Postgres/DRF/Celery. Todavía faltan migraciones generadas contra una base
-real, serializers/endpoints de la API y las tareas de Celery en sí
-(`recordatorio` hoy es solo una tabla, el job que la puebla no está escrito).
+Modelos, admin, endpoints REST (con las reglas de negocio de los procesos
+01 y 02 aplicadas) y las tareas de Celery que pueblan `recordatorio`. Falta
+armar el Proceso 03 (inscripciones institucionales / legajo) y un frontend.
