@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Box, Button, Paper, TextField, Typography, Alert } from "@mui/material";
 import { useAuth } from "../auth/AuthContext";
+import { Wordmark } from "../components/Wordmark";
 
 export function LoginPage() {
   const { usuario, login } = useAuth();
@@ -37,12 +38,13 @@ export function LoginPage() {
         alignItems: "center",
         minHeight: "100vh",
         px: 2,
+        bgcolor: "primary.dark",
       }}
     >
-      <Paper sx={{ p: 4, width: "100%", maxWidth: 380 }} elevation={3}>
-        <Typography variant="h5" component="h1" gutterBottom>
-          Web-Uni
-        </Typography>
+      <Paper sx={{ p: 4, width: "100%", maxWidth: 380 }} elevation={6}>
+        <Box sx={{ mb: 3 }}>
+          <Wordmark conSubtitulo />
+        </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
           Ingresá con tu usuario para ver tus comisiones.
         </Typography>

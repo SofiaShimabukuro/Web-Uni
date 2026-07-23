@@ -1,6 +1,7 @@
 import { AppBar, Toolbar, Typography, Chip, Button, Container, Box } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { Wordmark } from "./Wordmark";
 
 const NAV_POR_ROL: Record<string, { to: string; label: string }[]> = {
   alumno: [
@@ -26,9 +27,9 @@ export function AppLayout() {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <AppBar position="static">
         <Toolbar sx={{ gap: 2 }}>
-          <Typography variant="h6" sx={{ mr: 2 }}>
-            Web-Uni
-          </Typography>
+          <Box sx={{ mr: 2 }}>
+            <Wordmark color="#fff" />
+          </Box>
           <Box sx={{ display: "flex", gap: 1, flexGrow: 1 }}>
             {nav.map((item) => (
               <Button key={item.to} color="inherit" component={Link} to={item.to}>
