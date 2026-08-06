@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "cursos",
     "productividad",
     "tramites",
+    "agenda",
 ]
 
 AUTH_USER_MODEL = "usuarios.Usuario"
@@ -134,6 +135,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+
+# Archivos subidos por el usuario (apuntes y grabaciones - ver Proceso 04).
+# No se sirven por MEDIA_URL: se descargan por /api/apuntes/<id>/archivo/, que
+# valida permisos. MEDIA_ROOT es solo el destino en disco.
+MEDIA_ROOT = config("MEDIA_ROOT", default=str(BASE_DIR / "media"))
+MEDIA_URL = "media/"
+APUNTES_TAMANO_MAXIMO_MB = config("APUNTES_TAMANO_MAXIMO_MB", default=200, cast=int)
+# Todo lo que pase de 5 MB se escribe a un temporal en vez de quedar en memoria.
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

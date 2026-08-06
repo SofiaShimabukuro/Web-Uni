@@ -27,12 +27,18 @@ con `CORS_ALLOWED_ORIGINS`/`CSRF_TRUSTED_ORIGINS` incluyendo
 - `src/components/RutaProtegida.tsx` — redirige a `/login` si no hay sesión.
 - `src/pages/` — `LoginPage`, `DashboardPage` (panel del alumno: "mis
   comisiones" desde `/api/inscripciones/`), `ComisionDetailPage` (módulos,
-  recursos y entregas de una comisión).
+  recursos y entregas de una comisión), `CalendarioPage` (vista mensual
+  unificada + ABM de eventos propios) y `ApuntesPage` (subida y biblioteca
+  de apuntes y grabaciones).
+- `src/utils/calendario.ts` — grilla del mes y colores por tipo de evento.
 
 ## Estado actual
 
-Login + panel del alumno funcionando de punta a punta contra el backend
-real (probado con Playwright). Todavía no hay pantallas para docente/
-administrativo ni para el módulo de productividad (hábitos, repaso
-espaciado, autoevaluaciones) — consumen la misma API ya expuesta en
-`backend/productividad`, falta construir la UI.
+Login, panel del alumno, pantallas de docente/administrativo, productividad,
+legajo y trámites, y el calendario + apuntes del Proceso 04, todo contra el
+backend real (probado con Playwright).
+
+Las grabaciones se reproducen dentro de la app: como los archivos no tienen
+URL pública, se piden por XHR (que sí manda la cookie de sesión) y se
+convierten en un object URL — ver `descargarArchivoApunte` en
+`src/api/agenda.ts`.
