@@ -88,16 +88,26 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME", default="web_uni"),
-        "USER": config("DB_USER", default="web_uni"),
-        "PASSWORD": config("DB_PASSWORD", default="web_uni"),
-        "HOST": config("DB_HOST", default="localhost"),
-        "PORT": config("DB_PORT", default="5432"),
+# DB_ENGINE=sqlite evita tener que levantar un Postgres para un uso personal;
+# el esquema es el mismo (ver db/*.sql) y se puede migrar después.
+if config("DB_ENGINE", default="postgresql") == "sqlite":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": config("DB_NAME", default=str(BASE_DIR / "db.sqlite3")),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DB_NAME", default="web_uni"),
+            "USER": config("DB_USER", default="web_uni"),
+            "PASSWORD": config("DB_PASSWORD", default="web_uni"),
+            "HOST": config("DB_HOST", default="localhost"),
+            "PORT": config("DB_PORT", default="5432"),
+        }
+    }
 
 
 # Password validation
