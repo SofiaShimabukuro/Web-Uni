@@ -6,6 +6,8 @@ import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import { ComisionDetailPage } from "./pages/ComisionDetailPage";
 import { ProductividadPage } from "./pages/ProductividadPage";
+import { CalendarioPage } from "./pages/CalendarioPage";
+import { ApuntesPage } from "./pages/ApuntesPage";
 import { TramitesPage } from "./pages/TramitesPage";
 import { DocenteComisionPage } from "./pages/docente/DocenteComisionPage";
 import { DocenteMesasPage } from "./pages/docente/DocenteMesasPage";
@@ -25,6 +27,8 @@ export default function App() {
           >
             <Route path="/" element={<HomePage />} />
             <Route path="/comisiones/:comisionId" element={<ComisionDetailPage />} />
+            <Route path="/calendario" element={<CalendarioPage />} />
+            <Route path="/apuntes" element={<ApuntesPage />} />
             <Route path="/productividad" element={<ProductividadPage />} />
             <Route path="/tramites" element={<TramitesPage />} />
             <Route path="/docente/comisiones/:comisionId" element={<DocenteComisionPage />} />

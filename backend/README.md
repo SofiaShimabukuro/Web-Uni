@@ -11,6 +11,11 @@ Apps:
 - `productividad` — Proceso 02: planificador de estudio, hábitos, repaso
   espaciado, autoevaluaciones, recordatorios. Ver
   `docs/procesos/02-productividad-desempeno.md`.
+- `tramites` — Proceso 03: mesas de examen, inscripciones y solicitudes de
+  trámite. Ver `docs/procesos/03-mesas-legajo-tramites.md`.
+- `agenda` — Proceso 04: calendario personal (`/api/eventos/`, más la vista
+  unificada `/api/agenda/`) y biblioteca de apuntes y grabaciones
+  (`/api/apuntes/`). Ver `docs/procesos/04-agenda-apuntes.md`.
 
 ## Setup local
 
@@ -29,6 +34,15 @@ python manage.py runserver
 ```
 
 El panel de administración queda en `/admin/`.
+
+## Archivos subidos (apuntes y grabaciones)
+
+Se guardan en `MEDIA_ROOT` (por defecto `backend/media/`, ignorado por git).
+**No** se sirven como estáticos: la descarga pasa por
+`GET /api/apuntes/<id>/archivo/`, que valida que el apunte sea propio o
+esté compartido con una comisión del usuario. El máximo por archivo lo fija
+`APUNTES_TAMANO_MAXIMO_MB` (200 MB por defecto); para grabaciones más
+pesadas está el tipo `enlace`.
 
 ## Celery (recordatorios y repaso espaciado)
 
@@ -66,6 +80,9 @@ generar_todos_los_recordatorios()
 
 ## Estado actual
 
-Modelos, admin, endpoints REST (con las reglas de negocio de los procesos
-01 y 02 aplicadas) y las tareas de Celery que pueblan `recordatorio`. Falta
-armar el Proceso 03 (inscripciones institucionales / legajo) y un frontend.
+Modelos, admin y endpoints REST de los procesos 01 a 04, con sus reglas de
+negocio aplicadas, y las tareas de Celery que pueblan `recordatorio`. El
+frontend que los consume está en `frontend/`.
+
+Tests: `python manage.py test` (el proceso 04 tiene cobertura de permisos,
+subida de archivos y expansión de eventos repetidos en `agenda/tests.py`).
